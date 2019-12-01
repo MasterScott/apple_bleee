@@ -551,6 +551,8 @@ def parse_nearby(mac, header, data):
     for dev in dev_sig:
         if dev in header:
             dev_val = dev_sig[dev]
+    if args.verb:
+        dev_val += '-'.join(header)
     os_state, wifi_state = parse_os_wifi_code(result['wifi'], dev_val)
     if args.verb:
         wifi_state = '{}({})'.format(wifi_state, result['wifi'])

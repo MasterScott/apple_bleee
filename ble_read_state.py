@@ -291,6 +291,8 @@ ble_packets_types = {'watch_c': '0b',
                      'airdrop': '05',
                      }
 
+if not args.verb:
+    args.verb = 0
 if args.follow:
     # format MAC address to uppercase split by ':'s
     for i in range(len(args.follow)):

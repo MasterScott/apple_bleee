@@ -468,7 +468,7 @@ def parse_os_wifi_code(code, dev):
         if dev == 'MacBook':
             return ('Mac OS', 'On')
         else:
-            return ('iOS12', 'On')
+            return ('iOS12/13', 'On')
     if code == '18':
         if dev == 'MacBook':
             return ('Mac OS', 'Off')

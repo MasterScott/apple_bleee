@@ -32,6 +32,7 @@ Apple bleee. Apple device sniffer
 urllib3.disable_warnings()
 parser = argparse.ArgumentParser(description=help_desc, formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('-c', '--check_hash', action='store_true', help='Get phone number by hash')
+parser.add_argument('-f', '--follow', action='append', type=str, help='Follow MAC address(es), can be done multiple times')
 parser.add_argument('-n', '--check_phone', action='store_true', help='Get user info by phone number (TrueCaller/etc)')
 parser.add_argument('-r', '--check_region', action='store_true', help='Get phone number region info')
 parser.add_argument('-l', '--check_hlr', action='store_true',
@@ -289,6 +290,14 @@ ble_packets_types = {'watch_c': '0b',
                      'airdrop': '05',
                      }
 
+if args.follow:
+    # format MAC address to uppercase split by ':'s
+    for i in range(len(args.follow)):
+        mac = args.follow[i]
+        mac = mac.upper().replace('-', ':')
+        if ':' not in mac:
+            mac = ':'.join([mac[i:i+2] for i in range(0, len(mac), 2)])
+        args.follow[i] = mac
 if args.check_hash:
     if not (hash2phone_url or path.isfile(hash2phone_db)):
         print("You have to specify hash2phone_url or create phones.db if you want to match hashes to phones. See howto here: https://github.com/hexway/apple_bleee/tree/master/hash2phone")
@@ -719,12 +728,13 @@ def read_packet(mac, data_str):
     # os_state = '<unknown>'
     # wifi_state = '<unknown>'
     # unkn = '<unknown>'
+    if args.follow and mac not in args.follow:
+        return
 
     if apple_company_id in data_str:
         header = data_str[:data_str.find(apple_company_id)]
         data = data_str[data_str.find(apple_company_id) + len(apple_company_id):]
         packet = parse_ble_packet(data)
-        # print(data)
         if ble_packets_types['nearby'] in packet.keys():
             parse_nearby(mac, header, packet[ble_packets_types['nearby']])
         if ble_packets_types['handoff'] in packet.keys():

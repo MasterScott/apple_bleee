@@ -504,7 +504,10 @@ def parse_ble_packet(data):
     i = 0
     while i < len(data):
         tag = data[i:i + tag_len]
-        val_len = int(data[i + tag_len:i + tag_len + 2], 16)
+        try:
+            val_len = int(data[i + tag_len:i + tag_len + 2], 16)
+        except:
+            pass
         value_start_position = i + tag_len + 2
         value_end_position = i + tag_len + 2 + val_len * 2
         parsed_data[tag] = data[value_start_position:value_end_position]

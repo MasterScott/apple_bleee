@@ -40,6 +40,7 @@ parser.add_argument('-l', '--check_hlr', action='store_true',
 parser.add_argument('-s', '--ssid', action='store_true', help='Get SSID from requests')
 parser.add_argument('-m', '--message', action='store_true', help='Send iMessage to the victim')
 parser.add_argument('-a', '--airdrop', action='store_true', help='Get info from AWDL')
+parser.add_argument('-i', '--interface', type=str, help='Wifi interface to use')
 parser.add_argument('-v', '--verb', action='count', help='Verbose output')
 parser.add_argument('-t', '--ttl', type=int, default=15, help='ttl')
 args = parser.parse_args()
@@ -58,7 +59,7 @@ hlr_pwd = ''  # hlrlookup.com password here
 hlr_api_url = 'https://www.hlrlookup.com/api/hlr/?apikey={}&password={}&msisdn='.format(hlr_key, hlr_pwd)
 region_check_url = ''  # URL to region checker here
 imessage_url = ''  # URL to iMessage sender (sorry, but we did some RE for that :) )
-iwdev = 'wlan0'
+iwdev = args.interface or 'wlan0'
 apple_company_id = 'ff4c00'
 
 dev_id = 0  # the bluetooth device is hci0
@@ -769,9 +770,8 @@ def read_packet(mac, data_str):
         if ble_packets_types['airdrop'] in packet.keys():
             parse_airdrop_r(mac, packet[ble_packets_types['airdrop']])
     else:
-        if args.verb >= 2:
-            print("data_str={}".format(data_str))
-            print("other mac={} header={} data={} packet={}".format(mac, header, data, packet))
+        if args.verb >= 3:
+            print("other mac={} data={}".format(mac, data_str))
 
 def get_phone_db(hashp):
     global phone_number_info

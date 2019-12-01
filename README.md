@@ -47,21 +47,24 @@ Moreover, the tool detects requests for password sharing from Apple devices. In 
 
 ```bash
 python3 ble_read_state.py -h
-usage: ble_read_state.py [-h] [-c] [-n] [-r] [-l] [-s] [-m] [-a] [-t TTL]
+usage: ble_read_state.py [-h] [-c] [-n] [-r] [-l] [-s] [-m] [-a] [-v] [-t TTL] [-f MAC] [-i iface]
 
 Apple bleee. Apple device sniffer
 ---chipik
 
 optional arguments:
-  -h, --help          show this help message and exit
-  -c, --check_hash    Get phone number by hash
-  -n, --check_phone   Get user info by phone number (TrueCaller/etc)
-  -r, --check_region  Get phone number region info
-  -l, --check_hlr     Get phone number info by HLR request (hlrlookup.com)
-  -s, --ssid          Get SSID from requests
-  -m, --message       Send iMessage to the victim
-  -a, --airdrop       Get info from AWDL
-  -t TTL, --ttl TTL   ttl
+  -h, --help             show this help message and exit
+  -c, --check_hash       Get phone number by hash
+  -n, --check_phone      Get user info by phone number (TrueCaller/etc)
+  -r, --check_region     Get phone number region info
+  -l, --check_hlr        Get phone number info by HLR request (hlrlookup.com)
+  -s, --ssid             Get SSID from requests
+  -m, --message          Send iMessage to the victim
+  -a, --airdrop          Get info from AWDL
+  -v, --verbose          Add more verbosity, including -vv and -vvv
+  -i, --interface <IF>   Wifi interface to use
+  -f, --follow <MAC>     Follow one or more MAC addresses (can be used multiple times)
+  -t, --ttl <TTL>        ttl
 ```
 
 For monitoring you can just run the script without any parameters

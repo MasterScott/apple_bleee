@@ -40,7 +40,7 @@ parser.add_argument('-l', '--check_hlr', action='store_true',
 parser.add_argument('-s', '--ssid', action='store_true', help='Get SSID from requests')
 parser.add_argument('-m', '--message', action='store_true', help='Send iMessage to the victim')
 parser.add_argument('-a', '--airdrop', action='store_true', help='Get info from AWDL')
-parser.add_argument('-v', '--verb', action='store_true', help='Verbose output')
+parser.add_argument('-v', '--verb', action='count', help='Verbose output')
 parser.add_argument('-t', '--ttl', type=int, default=15, help='ttl')
 args = parser.parse_args()
 
@@ -735,6 +735,23 @@ def read_packet(mac, data_str):
         header = data_str[:data_str.find(apple_company_id)]
         data = data_str[data_str.find(apple_company_id) + len(apple_company_id):]
         packet = parse_ble_packet(data)
+
+        if args.verb >= 2:
+            ptype = []
+            for packet_type, packet_id in ble_packets_types.items():
+                if packet_id in packet.keys():
+                    ptype.append(packet_type)
+            if len(ptype):
+                ptype = ','.join(ptype)
+            else:
+                ptype = '?'
+            ptype += '({})'.format(','.join(packet.keys()))
+            pdata = data
+            zeroes = 11
+            if pdata.endswith('00' * zeroes):
+                pdata = "{} 00x{}".format(pdata[:-zeroes * 2], zeroes)
+            print("apple t={:20s} {} h={} o={} d={}".format(ptype, mac, header, data_str[4:10], pdata))
+
         if ble_packets_types['nearby'] in packet.keys():
             parse_nearby(mac, header, packet[ble_packets_types['nearby']])
         if ble_packets_types['handoff'] in packet.keys():
@@ -751,6 +768,10 @@ def read_packet(mac, data_str):
             parse_airpods(mac, packet[ble_packets_types['airpods']])
         if ble_packets_types['airdrop'] in packet.keys():
             parse_airdrop_r(mac, packet[ble_packets_types['airdrop']])
+    else:
+        if args.verb >= 2:
+            print("data_str={}".format(data_str))
+            print("other mac={} header={} data={} packet={}".format(mac, header, data, packet))
 
 def get_phone_db(hashp):
     global phone_number_info
@@ -982,6 +1003,7 @@ init_bluez()
 thread1 = Thread(target=do_sniff, args=(False,))
 thread1.daemon = True
 thread1.start()
-MyApp = App()
-MyApp.run()
+if args.verb < 2:
+    MyApp = App()
+    MyApp.run()
 thread1.join()
